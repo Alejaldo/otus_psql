@@ -68,9 +68,7 @@ $ sudo -u postgres pg_lsclusters
 Ver Cluster Port Status Owner    Data directory              Log file
 16  main    5432 down   postgres /var/lib/postgresql/16/main /var/log/postgresql/postgresql-16-main.log
 ```
-## 6. Создайте новый диск к ВМ размером 10GB
-+
-## 7. Добавьте свеже-созданный диск к виртуальной машине - надо зайти в режим ее редактирования и дальше выбрать пункт attach existing disk
+## 6. Создайте новый диск к ВМ размером 10GB + 7. Добавьте свеже-созданный диск к виртуальной машине - надо зайти в режим ее редактирования и дальше выбрать пункт attach existing disk
 ***Пункты 6 и 7 реализую через функционал кнопки Attach disk в разделе Compute Cloud / Virtual machines / chamonix / Disks - где в модальном окне создаю диск (кнопка Create new disk) и нажимаю кнопку Attach***
 ## 8. Проинициализируйте диск согласно инструкции и подмонтировать файловую систему, только не забывайте менять имя диска на актуальное, в вашем случае это скорее всего будет /dev/sdb - https://www.digitalocean.com/community/tutorials/how-to-partition-and-format-storage-devices-in-linux
 ***Делаю по инструкции монтирование диска:***
@@ -251,16 +249,13 @@ Error: /var/lib/postgresql/16/main is not accessible or does not exist
 ```
 ## 13. Напишите получилось или нет и почему
 ***Запуск не удался, потому что до этого физически файлы postrges были перенесены с диска на диск, но при этом в конфигурациях не поменял рабочий путь***
-## 14. Задание: найти конфигурационный параметр в файлах раположенных в /etc/postgresql/15/main который надо поменять и поменяйте его
-## 15. Напишите что и почему поменяли
+## 14. Задание: найти конфигурационный параметр в файлах раположенных в /etc/postgresql/15/main который надо поменять и поменяйте его + 15. Напишите что и почему поменяли
 ***Мне нужен файл `postgresql.conf`, который находится в папке `/etc/postgresql/16/main/`, открываю его в nano редакторе и меняю параметр `data_directory`:***
 ```
 data_directory = '/mnt/data/16/main'
 ```
 ***Это искомый параметр который теперь будет искать данные potsgres по новому адресу, в данном случае на новом диске***
-## 16. Попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 15 main start
-+
-## 17. Напишите получилось или нет и почему
+## 16. Попытайтесь запустить кластер - sudo -u postgres pg_ctlcluster 15 main start + 17. Напишите получилось или нет и почему
 ***Новая попытка запуска успешна***
 ```
 chamonix@chamonix:~$ sudo -u postgres pg_ctlcluster 16 main start
