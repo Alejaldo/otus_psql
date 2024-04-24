@@ -198,83 +198,190 @@ postgres@kntxt-vm:~$ psql -U postgres -d postgres -c "SELECT * FROM pg_stat_bgwr
 - Регулярные и эффективные контрольные точки критичны для хорошей производительности базы данных и времени восстановления. Если контрольные точки слишком частые или включают слишком много данных, они могут замедлить нормальную операцию базы данных. Напротив, редкие контрольные точки могут привести к более длительному времени восстановления после сбоя, потому что необходимо воспроизвести больше WAL.
 
 ## 5. Сравните tps в синхронном/асинхронном режиме утилитой pgbench. Объясните полученный результат.
-***По умолчанию работает асинхронный режим, поэтому запускаю его:***
+***По умолчанию работает синхронный режим (в файле /etc/postgresql/15/main/postgresql.conf строка "#synchronous_commit = on  # synchronization level;" является закомментированной, при этом по умолчанию  PostgreSQL использует режим "synchronous_commit = on"), поэтому запускаю его:***
 ```
 karussia@kntxt-vm:~$ sudo -i -u postgres
-postgres@kntxt-vm:~$ psql -U postgres -d postgres -c "SELECT * FROM pg_stat_bgwriter;"
-postgres@kntxt-vm:~$ pgbench -c 10 -T 60 -P 10 postgres
+postgres@kntxt-vm:~$ pgbench -c 10 -T 600 -P 10 postgres
 pgbench (15.6 (Ubuntu 15.6-1.pgdg22.04+1))
 starting vacuum...end.
-progress: 10.0 s, 627.1 tps, lat 15.900 ms stddev 18.067, 0 failed
-progress: 20.0 s, 793.9 tps, lat 12.597 ms stddev 9.951, 0 failed
-progress: 30.0 s, 732.1 tps, lat 13.662 ms stddev 9.768, 0 failed
-progress: 40.0 s, 613.9 tps, lat 16.285 ms stddev 17.882, 0 failed
-progress: 50.0 s, 797.2 tps, lat 12.521 ms stddev 9.662, 0 failed
-progress: 60.0 s, 684.8 tps, lat 14.627 ms stddev 10.667, 0 failed
+progress: 10.0 s, 323.1 tps, lat 30.870 ms stddev 37.715, 0 failed
+progress: 20.0 s, 498.4 tps, lat 20.002 ms stddev 19.143, 0 failed
+progress: 30.0 s, 307.1 tps, lat 32.624 ms stddev 31.610, 0 failed
+progress: 40.0 s, 249.9 tps, lat 39.967 ms stddev 58.034, 0 failed
+progress: 50.0 s, 511.5 tps, lat 19.560 ms stddev 16.870, 0 failed
+progress: 60.0 s, 468.1 tps, lat 21.366 ms stddev 18.217, 0 failed
+progress: 70.0 s, 373.1 tps, lat 26.827 ms stddev 30.541, 0 failed
+progress: 80.0 s, 436.8 tps, lat 22.852 ms stddev 25.865, 0 failed
+progress: 90.0 s, 432.8 tps, lat 23.163 ms stddev 23.364, 0 failed
+progress: 100.0 s, 309.9 tps, lat 32.224 ms stddev 49.376, 0 failed
+progress: 110.0 s, 454.8 tps, lat 21.990 ms stddev 22.698, 0 failed
+progress: 120.0 s, 610.5 tps, lat 16.392 ms stddev 13.161, 0 failed
+progress: 130.0 s, 285.7 tps, lat 34.933 ms stddev 49.742, 0 failed
+progress: 140.0 s, 516.4 tps, lat 19.328 ms stddev 16.786, 0 failed
+progress: 150.0 s, 314.4 tps, lat 31.892 ms stddev 31.104, 0 failed
+progress: 160.0 s, 259.4 tps, lat 38.569 ms stddev 57.182, 0 failed
+progress: 170.0 s, 409.4 tps, lat 24.372 ms stddev 24.060, 0 failed
+progress: 180.0 s, 264.9 tps, lat 37.846 ms stddev 38.323, 0 failed
+progress: 190.0 s, 312.7 tps, lat 31.992 ms stddev 48.958, 0 failed
+progress: 200.0 s, 469.4 tps, lat 21.221 ms stddev 22.879, 0 failed
+progress: 210.0 s, 513.6 tps, lat 19.510 ms stddev 19.404, 0 failed
+progress: 220.0 s, 311.0 tps, lat 32.200 ms stddev 46.665, 0 failed
+progress: 230.0 s, 485.0 tps, lat 20.589 ms stddev 19.413, 0 failed
+progress: 240.0 s, 421.8 tps, lat 23.734 ms stddev 21.013, 0 failed
+progress: 250.0 s, 497.7 tps, lat 20.102 ms stddev 25.524, 0 failed
+progress: 260.0 s, 520.9 tps, lat 19.161 ms stddev 20.400, 0 failed
+progress: 270.0 s, 395.7 tps, lat 25.322 ms stddev 22.637, 0 failed
+progress: 280.0 s, 297.8 tps, lat 33.546 ms stddev 52.303, 0 failed
+progress: 290.0 s, 515.7 tps, lat 19.380 ms stddev 19.642, 0 failed
+progress: 300.0 s, 485.7 tps, lat 20.592 ms stddev 19.079, 0 failed
+progress: 310.0 s, 229.4 tps, lat 43.560 ms stddev 51.165, 0 failed
+progress: 320.0 s, 444.2 tps, lat 22.525 ms stddev 22.984, 0 failed
+progress: 330.0 s, 305.7 tps, lat 32.712 ms stddev 33.764, 0 failed
+progress: 340.0 s, 228.8 tps, lat 43.652 ms stddev 54.419, 0 failed
+progress: 350.0 s, 441.4 tps, lat 22.701 ms stddev 19.998, 0 failed
+progress: 360.0 s, 325.7 tps, lat 30.674 ms stddev 27.699, 0 failed
+progress: 370.0 s, 432.8 tps, lat 23.135 ms stddev 33.024, 0 failed
+progress: 380.0 s, 605.0 tps, lat 16.515 ms stddev 15.891, 0 failed
+progress: 390.0 s, 666.9 tps, lat 15.005 ms stddev 11.627, 0 failed
+progress: 400.0 s, 310.7 tps, lat 32.158 ms stddev 44.970, 0 failed
+progress: 410.0 s, 487.4 tps, lat 20.497 ms stddev 18.558, 0 failed
+progress: 420.0 s, 368.3 tps, lat 27.197 ms stddev 27.398, 0 failed
+progress: 430.0 s, 473.5 tps, lat 21.126 ms stddev 24.138, 0 failed
+progress: 440.0 s, 486.4 tps, lat 20.509 ms stddev 23.879, 0 failed
+progress: 450.0 s, 337.1 tps, lat 29.685 ms stddev 29.791, 0 failed
+progress: 460.0 s, 332.4 tps, lat 30.132 ms stddev 48.594, 0 failed
+progress: 470.0 s, 600.7 tps, lat 16.584 ms stddev 14.039, 0 failed
+progress: 480.0 s, 489.3 tps, lat 20.504 ms stddev 18.203, 0 failed
+progress: 490.0 s, 329.9 tps, lat 30.272 ms stddev 42.475, 0 failed
+progress: 500.0 s, 518.8 tps, lat 19.264 ms stddev 19.973, 0 failed
+progress: 510.0 s, 471.3 tps, lat 21.251 ms stddev 19.224, 0 failed
+progress: 520.0 s, 221.3 tps, lat 45.166 ms stddev 57.464, 0 failed
+progress: 530.0 s, 597.7 tps, lat 16.701 ms stddev 15.171, 0 failed
+progress: 540.0 s, 399.0 tps, lat 25.061 ms stddev 22.423, 0 failed
+progress: 550.0 s, 271.1 tps, lat 36.995 ms stddev 56.321, 0 failed
+progress: 560.0 s, 506.6 tps, lat 19.692 ms stddev 18.287, 0 failed
+progress: 570.0 s, 588.0 tps, lat 17.039 ms stddev 16.488, 0 failed
+progress: 580.0 s, 383.5 tps, lat 26.046 ms stddev 45.453, 0 failed
+progress: 590.0 s, 500.5 tps, lat 19.960 ms stddev 18.598, 0 failed
+progress: 600.0 s, 464.3 tps, lat 21.585 ms stddev 19.508, 0 failed
 transaction type: <builtin: TPC-B (sort of)>
 scaling factor: 1
 query mode: simple
 number of clients: 10
 number of threads: 1
 maximum number of tries: 1
-duration: 60 s
-number of transactions actually processed: 42500
+duration: 600 s
+number of transactions actually processed: 250719
 number of failed transactions: 0 (0.000%)
-latency average = 14.114 ms
-latency stddev = 12.934 ms
-initial connection time = 18.541 ms
-tps = 708.413018 (without initial connection time)
+latency average = 23.930 ms
+latency stddev = 29.874 ms
+initial connection time = 19.143 ms
+tps = 417.868278 (without initial connection time)
 ```
-***Для настройки синхронного режима открою файл /etc/postgresql/15/main/postgresql.conf где сделаю запись
+***Для настройки асинхронного режима открою файл /etc/postgresql/15/main/postgresql.conf где сделаю запись
 ```
-synchronous_commit = on
+synchronous_commit = off
 ```
 ***и сделаю рестарт:***
 ```
 karussia@kntxt-vm:~$ sudo systemctl restart postgresql
 ```
-***теперь запускю ту же команду "pgbench -c 10 -T 60 -P 10 postgres", но теперь она будет использовать синхронный режим:***
+***теперь запускю ту же команду "pgbench -c 10 -T 60 -P 10 postgres", но теперь она будет использовать асинхронный режим:***
 ```
 karussia@kntxt-vm:~$ sudo -i -u postgres
-postgres@kntxt-vm:~$ pgbench -c 10 -T 60 -P 10 postgres
+postgres@kntxt-vm:~$ pgbench -c 10 -T 600 -P 10 postgres
 pgbench (15.6 (Ubuntu 15.6-1.pgdg22.04+1))
 starting vacuum...end.
-progress: 10.0 s, 747.9 tps, lat 13.335 ms stddev 10.268, 0 failed
-progress: 20.0 s, 746.5 tps, lat 13.393 ms stddev 9.799, 0 failed
-progress: 30.0 s, 636.1 tps, lat 15.719 ms stddev 18.399, 0 failed
-progress: 40.0 s, 787.0 tps, lat 12.702 ms stddev 9.938, 0 failed
-progress: 50.0 s, 699.9 tps, lat 14.286 ms stddev 10.916, 0 failed
-progress: 60.0 s, 647.3 tps, lat 15.454 ms stddev 17.176, 0 failed
+progress: 10.0 s, 5026.3 tps, lat 1.984 ms stddev 1.086, 0 failed
+progress: 20.0 s, 5046.0 tps, lat 1.980 ms stddev 1.079, 0 failed
+progress: 30.0 s, 4963.2 tps, lat 2.013 ms stddev 1.104, 0 failed
+progress: 40.0 s, 4968.3 tps, lat 2.011 ms stddev 1.132, 0 failed
+progress: 50.0 s, 4994.4 tps, lat 2.000 ms stddev 1.096, 0 failed
+progress: 60.0 s, 4967.7 tps, lat 2.011 ms stddev 1.124, 0 failed
+progress: 70.0 s, 4977.5 tps, lat 2.007 ms stddev 1.118, 0 failed
+progress: 80.0 s, 5027.6 tps, lat 1.987 ms stddev 1.096, 0 failed
+progress: 90.0 s, 5019.5 tps, lat 1.990 ms stddev 1.127, 0 failed
+progress: 100.0 s, 4963.4 tps, lat 2.013 ms stddev 1.170, 0 failed
+progress: 110.0 s, 5042.5 tps, lat 1.981 ms stddev 1.099, 0 failed
+progress: 120.0 s, 4995.7 tps, lat 2.000 ms stddev 1.123, 0 failed
+progress: 130.0 s, 4993.5 tps, lat 2.001 ms stddev 1.122, 0 failed
+progress: 140.0 s, 4969.4 tps, lat 2.011 ms stddev 1.133, 0 failed
+progress: 150.0 s, 4985.7 tps, lat 2.004 ms stddev 1.119, 0 failed
+progress: 160.0 s, 4975.7 tps, lat 2.008 ms stddev 1.130, 0 failed
+progress: 170.0 s, 5016.7 tps, lat 1.992 ms stddev 1.114, 0 failed
+progress: 180.0 s, 5037.3 tps, lat 1.983 ms stddev 1.104, 0 failed
+progress: 190.0 s, 5028.8 tps, lat 1.987 ms stddev 1.160, 0 failed
+progress: 200.0 s, 4986.8 tps, lat 2.004 ms stddev 1.120, 0 failed
+progress: 210.0 s, 4969.4 tps, lat 2.011 ms stddev 1.130, 0 failed
+progress: 220.0 s, 4880.7 tps, lat 2.047 ms stddev 3.468, 0 failed
+progress: 230.0 s, 4802.4 tps, lat 2.080 ms stddev 8.703, 0 failed
+progress: 240.0 s, 5084.6 tps, lat 1.965 ms stddev 1.104, 0 failed
+progress: 250.0 s, 5030.2 tps, lat 1.986 ms stddev 1.120, 0 failed
+progress: 260.0 s, 5061.5 tps, lat 1.974 ms stddev 1.094, 0 failed
+progress: 270.0 s, 5039.0 tps, lat 1.983 ms stddev 1.087, 0 failed
+progress: 280.0 s, 4922.1 tps, lat 2.030 ms stddev 1.185, 0 failed
+progress: 290.0 s, 5019.3 tps, lat 1.991 ms stddev 1.127, 0 failed
+progress: 300.0 s, 5019.1 tps, lat 1.990 ms stddev 1.142, 0 failed
+progress: 310.0 s, 4996.2 tps, lat 2.000 ms stddev 1.111, 0 failed
+progress: 320.0 s, 5078.7 tps, lat 1.967 ms stddev 1.098, 0 failed
+progress: 330.0 s, 5030.4 tps, lat 1.986 ms stddev 1.094, 0 failed
+progress: 340.0 s, 4989.9 tps, lat 2.002 ms stddev 1.162, 0 failed
+progress: 350.0 s, 5003.5 tps, lat 1.997 ms stddev 1.121, 0 failed
+progress: 360.0 s, 4993.3 tps, lat 2.001 ms stddev 1.130, 0 failed
+progress: 370.0 s, 4945.8 tps, lat 2.020 ms stddev 1.128, 0 failed
+progress: 380.0 s, 4951.5 tps, lat 2.018 ms stddev 1.131, 0 failed
+progress: 390.0 s, 4998.0 tps, lat 1.999 ms stddev 1.106, 0 failed
+progress: 400.0 s, 5003.6 tps, lat 1.997 ms stddev 1.155, 0 failed
+progress: 410.0 s, 5021.9 tps, lat 1.990 ms stddev 1.099, 0 failed
+progress: 420.0 s, 4947.2 tps, lat 2.020 ms stddev 1.117, 0 failed
+progress: 430.0 s, 4932.9 tps, lat 2.025 ms stddev 1.122, 0 failed
+progress: 440.0 s, 4918.0 tps, lat 2.032 ms stddev 1.115, 0 failed
+progress: 450.0 s, 4929.7 tps, lat 2.027 ms stddev 1.136, 0 failed
+progress: 460.0 s, 4898.0 tps, lat 2.040 ms stddev 1.177, 0 failed
+progress: 470.0 s, 4928.2 tps, lat 2.027 ms stddev 1.114, 0 failed
+progress: 480.0 s, 4897.6 tps, lat 2.040 ms stddev 1.113, 0 failed
+progress: 490.0 s, 4888.9 tps, lat 2.044 ms stddev 1.126, 0 failed
+progress: 500.0 s, 4901.4 tps, lat 2.038 ms stddev 1.134, 0 failed
+progress: 510.0 s, 4923.6 tps, lat 2.029 ms stddev 1.113, 0 failed
+progress: 520.0 s, 4878.6 tps, lat 2.048 ms stddev 1.178, 0 failed
+progress: 530.0 s, 4950.4 tps, lat 2.018 ms stddev 1.102, 0 failed
+progress: 540.0 s, 4960.8 tps, lat 2.014 ms stddev 1.101, 0 failed
+progress: 550.0 s, 4856.6 tps, lat 2.057 ms stddev 1.137, 0 failed
+progress: 560.0 s, 4922.0 tps, lat 2.030 ms stddev 1.125, 0 failed
+progress: 570.0 s, 4925.8 tps, lat 2.028 ms stddev 1.114, 0 failed
+progress: 580.0 s, 4811.6 tps, lat 2.077 ms stddev 1.213, 0 failed
+progress: 590.0 s, 4937.4 tps, lat 2.024 ms stddev 1.124, 0 failed
+progress: 600.0 s, 4913.4 tps, lat 2.034 ms stddev 1.135, 0 failed
 transaction type: <builtin: TPC-B (sort of)>
 scaling factor: 1
 query mode: simple
 number of clients: 10
 number of threads: 1
 maximum number of tries: 1
-duration: 60 s
-number of transactions actually processed: 42657
+duration: 600 s
+number of transactions actually processed: 2981502
 number of failed transactions: 0 (0.000%)
-latency average = 14.062 ms
-latency stddev = 13.021 ms
-initial connection time = 20.989 ms
-tps = 711.021387 (without initial connection time)
-
+latency average = 2.011 ms
+latency stddev = 1.625 ms
+initial connection time = 19.439 ms
+tps = 4969.205894 (without initial connection time)
 ```
 ***Сравнивая результаты двух тестов pgbench в синхронном и асинхронном режимах, сделаю ряд выводов о том, как режим подтверждения транзакций влияет на производительность системы:***
-1. Результаты Асинхронного Режима
-- TPS (транзакций в секунду): 708.413018
-- Средняя задержка: 14.114 мс
-- Стандартное отклонение задержки: 12.934 мс
-2. Результаты Синхронного Режима
-- TPS (транзакций в секунду): 711.021387
-- Средняя задержка: 14.062 мс
-- Стандартное отклонение задержки: 13.021 мс
-3. Анализ Результатов
-- Производительность TPS: В синхронном режиме TPS немного выше (711.02 против 708.41). Это может быть неожиданным, поскольку обычно ожидается, что синхронный режим, требующий записи журнала на диск перед подтверждением транзакции, будет медленнее. Однако разница здесь минимальна, что может указывать на то, что ваши дисковые операции не являются узким местом, или что накладные расходы на запись WAL не значительны по сравнению с другими задержками в системе.
-- Задержка: Средняя задержка практически идентична в обоих режимах, что подтверждает предыдущий вывод о минимальном влиянии синхронизации WAL на общую задержку. Стандартное отклонение задержки также остается сопоставимым, что говорит о схожести вариативности времени ответа в обоих тестах.
-4. Выводы:
-- Влияние синхронного коммита на производительность минимально в моем текущем тестовом окружении, то есть нет жертв производительностью для повышения надежности данных.
-- Дисковая подсистема эффективно обрабатывает операции записи WAL - оборудование виртуальной машины достаточно хорошо справляется с текущей нагрузкой.
+***1. Синхронный режим:***
+- TPS (транзакций в секунду): 417.868278
+- Средняя задержка: 23.930 мс
+- Стандартное отклонение задержки: 29.874 мс
+***2. Асинхронный режим:***
+- TPS (транзакций в секунду): 4969.205894
+- Средняя задержка: 2.011 мс
+- Стандартное отклонение задержки: 1.625 мс
+***3. Анализ результатов:***
+- Производительность TPS: В асинхронном режиме TPS значительно выше (4969.20 против 417.87), так как в асинхронном режиме PostgreSQL не ждет подтверждения записи данных на диск перед тем, как сообщить клиенту об успешном завершении транзакции, что позволяет обрабатывать больше транзакций за тот же период времени.
+- Задержка: Средняя задержка в асинхронном режиме значительно ниже, чем в синхронном (2.011 мс против 23.930 мс) - ожидание записи данных на диск в синхронном режиме увеличивает общее время ответа системы на операции.
+- Стандартное отклонение задержки: В асинхронном режиме стандартное отклонение задержки также ниже, что указывает на более стабильное и предсказуемое время ответа на операции по сравнению с синхронным режимом.
+***4. Выводы:***
+- Влияние на производительность: Асинхронный режим явно выигрывает по производительности за счет уменьшения задержек и увеличения количества обработанных транзакций. Скорее всего асинхронный режим будет более предпочтительным выбором для проектов, где требования к производительности превышают требования к надежности данных.
+- Риски асинхронного режима: потенциально при асинхронном режиме увеличивается риск потери данных в случае сбоя системы, например, транзакции могут быть отмечены как завершенные до того как данные фактически записаны на диск, хотя по разным причинам фактически данные могут и не записаться на диск.
 
 ## 6. Создайте новый кластер с включенной контрольной суммой страниц. Создайте таблицу. Вставьте несколько значений. Выключите кластер. Измените пару байт в таблице. Включите кластер и сделайте выборку из таблицы. Что и почему произошло? как проигнорировать ошибку и продолжить работу?
 ***Удалю существующий кластер и создам новый:***
