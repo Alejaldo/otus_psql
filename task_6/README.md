@@ -278,7 +278,7 @@ latency stddev = 29.874 ms
 initial connection time = 19.143 ms
 tps = 417.868278 (without initial connection time)
 ```
-***Для настройки асинхронного режима открою файл /etc/postgresql/15/main/postgresql.conf где сделаю запись
+***Для настройки асинхронного режима открою файл /etc/postgresql/15/main/postgresql.conf где сделаю запись***
 ```
 synchronous_commit = off
 ```
