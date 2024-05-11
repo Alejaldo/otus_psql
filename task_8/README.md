@@ -817,16 +817,28 @@ Threads fairness:
 Постоянно низкая задержка 95-го процентиля предполагает, что система эффективно справляется с большинством операций в настройках "Aggressive Performance".
 
 Сценарий Aggressive Performance:
-- TPS: 1454.94
-- Средняя задержка: 2.75 мс
+- pgbench
+    - tps: 6741.589345
+    - Average Latency: 1.483 ms
+- sysbench
+    - tps: 1454.94
+    - Average Latency: 2.75 ms
 
 Сценарий High Concurrency:
-- TPS: 403.08
-- Средняя задержка: 10.488 мс
+- pgbench
+    - tps: 953.473235
+    - Average Latency: 10.488 ms
+- sysbench
+    - tps: 403.08
+    - Average Latency: 10.488 ms
 
 Сценарий Minimal:
-- TPS: 5218.492266 (pgbench)
-- Средняя задержка: 1.916 мс
+- pgbench
+    - tps: 5218.492266
+    - Average Latency: 1.916 ms
+- sysbench
+    - tps: 1090.70
+    - Average Latency: 3.67 ms
 
 ***Анализ:***
 1. Эффективность и скорость:
